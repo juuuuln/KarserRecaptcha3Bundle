@@ -13,7 +13,35 @@
                     setTimeout(recaptchaCallback_{{ validJsId }}, 100000);
                 };
             </script>
-            <script type="text/javascript" src="https://{{ form.vars.host }}/recaptcha/api.js?render={{ form.vars.site_key }}&hl={{ form.vars.locale }}&onload=recaptchaCallback_{{ validJsId }}" async defer{% if form.vars.script_nonce_csp is defined %} nonce="{{ form.vars.script_nonce_csp }}"{% endif %}></script>
-        {%- endif %}
+            <!-- ReCAPTCHA Placeholder -->
+            <div id="recaptcha-placeholder"></div>
+
+            <!-- ReCAPTCHA Script Loader -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var recaptchaLoaded = false;
+
+                    function loadRecaptcha() {
+                        if (!recaptchaLoaded) {
+                            var script = document.createElement('script');
+                            script.src = 'https://www.recaptcha.net/recaptcha/api.js?render={{ form.vars.site_key }}&hl={{ form.vars.locale }}&onload=recaptchaCallback_{{ validJsId }}';
+                            script.async = true;
+                            script.defer = true;
+                            document.body.appendChild(script);
+                            recaptchaLoaded = true;
+                            console.log('ReCAPTCHA script loaded');
+                        }
+                    }
+
+                    function handleScrollOrTouch() {
+                        if (!recaptchaLoaded) {
+                            loadRecaptcha();
+                        }
+                    }
+
+                    window.addEventListener('scroll', handleScrollOrTouch, { once: true });
+                    window.addEventListener('touchstart', handleScrollOrTouch, { once: true });
+                });
+            </script>        {%- endif %}
     {% endapply %}
 {% endblock %}
