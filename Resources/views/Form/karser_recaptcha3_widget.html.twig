@@ -24,9 +24,19 @@
                     function loadRecaptcha() {
                         if (!recaptchaLoaded) {
                             var script = document.createElement('script');
-                            script.src = 'https://www.recaptcha.net/recaptcha/api.js?data-badge=bottomleft&render={{ form.vars.site_key }}&hl={{ form.vars.locale }}&onload=recaptchaCallback_{{ validJsId }}';
+                            script.src = 'https://www.recaptcha.net/recaptcha/api.js?render={{ form.vars.site_key }}&hl={{ form.vars.locale }}';
                             script.async = true;
                             script.defer = true;
+                            script.onload = function() {
+                                grecaptcha.ready(function() {
+                                    grecaptcha.render('recaptcha-placeholder', {
+                                        'sitekey': '{{ form.vars.site_key }}',
+                                        'badge': 'bottomleft',
+                                        'size': 'invisible',
+                                        'callback': recaptchaCallback_{{ validJsId }}
+                                    });
+                                });
+                            };
                             document.body.appendChild(script);
                             recaptchaLoaded = true;
                             console.log('ReCAPTCHA script loaded');
@@ -42,6 +52,8 @@
                     window.addEventListener('scroll', handleScrollOrTouch, { once: true });
                     window.addEventListener('touchstart', handleScrollOrTouch, { once: true });
                 });
-            </script>        {%- endif %}
+            </script>
+
+        {%- endif %}
     {% endapply %}
 {% endblock %}
