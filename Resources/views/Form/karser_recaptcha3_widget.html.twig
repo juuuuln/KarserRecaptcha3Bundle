@@ -24,7 +24,7 @@
                     function loadRecaptcha() {
                         if (!recaptchaLoaded) {
                             var script = document.createElement('script');
-                            script.src = 'https://www.recaptcha.net/recaptcha/api.js?render={{ form.vars.site_key }}&hl={{ form.vars.locale }}&onload=recaptchaCallback_{{ validJsId }}';
+                            script.src = 'https://www.recaptcha.net/recaptcha/api.js?data-badge=bottomleft&render={{ form.vars.site_key }}&hl={{ form.vars.locale }}&onload=recaptchaCallback_{{ validJsId }}';
                             script.async = true;
                             script.defer = true;
                             document.body.appendChild(script);
