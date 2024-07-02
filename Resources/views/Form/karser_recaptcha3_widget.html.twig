@@ -14,7 +14,11 @@
                 };
             </script>
             <!-- ReCAPTCHA Placeholder -->
-            <div id="recaptcha-placeholder"></div>
+            <div id="recaptcha-placeholder" class="g-recaptcha"
+                 data-sitekey="{{ form.vars.site_key }}"
+                 data-callback="recaptchaCallback_{{ validJsId }}"
+                 data-size="invisible"
+                 data-badge="bottomleft"></div>
 
             <!-- ReCAPTCHA Script Loader -->
             <script>
@@ -24,23 +28,22 @@
                     function loadRecaptcha() {
                         if (!recaptchaLoaded) {
                             var script = document.createElement('script');
-                            script.src = 'https://www.recaptcha.net/recaptcha/api.js?render={{ form.vars.site_key }}&hl={{ form.vars.locale }}';
+                            script.src = 'https://www.recaptcha.net/recaptcha/api.js?onload=onloadCallback&render=explicit&hl={{ form.vars.locale }}';
                             script.async = true;
                             script.defer = true;
-                            script.onload = function() {
-                                grecaptcha.ready(function() {
-                                    grecaptcha.render('recaptcha-placeholder', {
-                                        'sitekey': '{{ form.vars.site_key }}',
-                                        'badge': 'bottomleft',
-                                        'size': 'invisible',
-                                        'callback': recaptchaCallback_{{ validJsId }}
-                                    });
-                                });
-                            };
                             document.body.appendChild(script);
                             recaptchaLoaded = true;
                             console.log('ReCAPTCHA script loaded');
                         }
+                    }
+
+                    function onloadCallback() {
+                        grecaptcha.render('recaptcha-placeholder', {
+                            'sitekey': '{{ form.vars.site_key }}',
+                            'callback': recaptchaCallback_{{ validJsId }},
+                            'size': 'invisible',
+                            'badge': 'bottomleft'
+                        });
                     }
 
                     function handleScrollOrTouch() {
